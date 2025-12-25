@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -9,10 +10,60 @@ import styles from './admin.module.css';
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Skip auth check on login page
+    if (pathname === '/admin/login') {
+      setLoading(false);
+      return;
+    }
+
+    // Check authentication status
+    async function checkAuth() {
+      try {
+        const response = await fetch('/api/auth/check');
+        const data = await response.json();
+        
+        if (!data.authenticated) {
+          router.push('/admin/login');
+        } else {
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        router.push('/admin/login');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    checkAuth();
+  }, [pathname, router]);
 
   // Don't show sidebar on login page
   if (pathname === '/admin/login') {
     return children;
+  }
+
+  // Show loading while checking auth
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        background: 'var(--bg-primary)'
+      }}>
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
+  // If not authenticated, don't render anything (redirect is happening)
+  if (!isAuthenticated) {
+    return null;
   }
 
   const handleLogout = async () => {
@@ -67,3 +118,4 @@ export default function AdminLayout({ children }) {
     </div>
   );
 }
+

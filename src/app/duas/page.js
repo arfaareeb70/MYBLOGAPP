@@ -1,29 +1,38 @@
-import { supabase } from '@/lib/supabase';
+'use client';
+
+import { useState, useEffect } from 'react';
 import DuaCard from '@/components/dua/DuaCard';
+import CategoryFilter from '@/components/CategoryFilter';
 import styles from './duas.module.css';
 
-async function getDuas() {
-  try {
-    const { data: duas } = await supabase
-      .from('duas')
-      .select('*, category:categories(name)')
-      .eq('is_published', true)
-      .order('created_at', { ascending: false });
+export default function DuasPage() {
+  const [duas, setDuas] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    return { duas: duas || [] };
-  } catch (error) {
-    console.error('Error fetching duas:', error);
-    return { duas: [] };
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const duasRes = await fetch('/api/duas');
+        const duasData = await duasRes.json();
+        
+        const catsRes = await fetch('/api/categories?type=dua');
+        const catsData = await catsRes.json();
+        
+        setDuas(duasData);
+        setCategories(catsData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <div className="loading"><div className="spinner"></div></div>;
   }
-}
-
-export const metadata = {
-  title: 'Duas - Dua & Blogs',
-  description: 'Discover beautiful Islamic duas with Arabic text, transliteration, and translations',
-};
-
-export default async function DuasPage() {
-  const { duas } = await getDuas();
 
   return (
     <>
@@ -37,13 +46,12 @@ export default async function DuasPage() {
       </div>
 
       <div className="container">
-        <div className={styles.grid}>
-          {duas.length > 0 ? (
-            duas.map((dua) => <DuaCard key={dua.id} dua={dua} />)
-          ) : (
-            <p className={styles.emptyState}>No duas available yet.</p>
-          )}
-        </div>
+        <CategoryFilter
+          categories={categories}
+          items={duas}
+          renderItem={(dua) => <DuaCard key={dua.id} dua={dua} />}
+          emptyMessage="No duas available yet."
+        />
       </div>
     </>
   );

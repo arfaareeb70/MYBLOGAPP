@@ -68,8 +68,9 @@ CREATE TABLE IF NOT EXISTS duas (
 -- 7. Insert default admin user (password: admin123)
 -- IMPORTANT: Change this password after first login!
 INSERT INTO admin_users (username, password_hash)
-VALUES ('admin', '$2a$10$rQnM1RU8.hWGxqbgPxVJxO9X7Y6Z5A4B3C2D1E0F9G8H7I6J5K4L3M')
-ON CONFLICT (username) DO NOTHING;
+VALUES ('admin', '$2b$10$EFig3g0ZJb.HoUxF92M1luByHKgQTsBoAS5oKSokceHj/yW/RpyLm')
+ON CONFLICT (username) DO UPDATE 
+SET password_hash = '$2b$10$EFig3g0ZJb.HoUxF92M1luByHKgQTsBoAS5oKSokceHj/yW/RpyLm';
 
 -- 8. Insert default site settings
 INSERT INTO site_settings (site_title)

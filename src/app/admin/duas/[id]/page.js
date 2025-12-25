@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Upload } from 'lucide-react';
 import { generateSlug, compressImage } from '@/lib/utils';
-import styles from '../editor.module.css';
+import styles from '../../editor.module.css';
 
 export default function DuaEditorPage({ params }) {
   const unwrappedParams = use(params);
@@ -103,10 +103,14 @@ export default function DuaEditorPage({ params }) {
       const url = isNew ? '/api/duas' : `/api/duas/${unwrappedParams.id}`;
       const method = isNew ? 'POST' : 'PUT';
 
+      // Ensure slug exists
+      const finalSlug = dua.slug || generateSlug(dua.title);
+      const payload = { ...dua, slug: finalSlug };
+
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dua),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) throw new Error('Failed to save');

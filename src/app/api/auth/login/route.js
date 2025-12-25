@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
 export async function POST(request) {
   try {
@@ -13,8 +13,17 @@ export async function POST(request) {
       );
     }
 
-    // Get admin user
-    const { data: admin, error } = await supabase
+    // Check if admin client is available
+    if (!supabaseAdmin) {
+      console.error('Supabase admin client not initialized. Check environment variables.');
+      return NextResponse.json(
+        { error: 'Server configuration error. Please contact admin.' },
+        { status: 500 }
+      );
+    }
+
+    // Get admin user using service role to bypass RLS
+    const { data: admin, error } = await supabaseAdmin
       .from('admin_users')
       .select('*')
       .eq('username', username)

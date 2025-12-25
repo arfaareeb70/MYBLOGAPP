@@ -1,34 +1,38 @@
-import { supabase } from '@/lib/supabase';
+'use client';
+
+import { useState, useEffect } from 'react';
 import BlogCard from '@/components/blog/BlogCard';
+import CategoryFilter from '@/components/CategoryFilter';
 import styles from './blogs.module.css';
 
-async function getBlogs() {
-  try {
-    const { data: blogs } = await supabase
-      .from('blogs')
-      .select('*, category:categories(name)')
-      .eq('is_published', true)
-      .order('created_at', { ascending: false });
+export default function BlogsPage() {
+  const [blogs, setBlogs] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    const { data: categories } = await supabase
-      .from('categories')
-      .select('*')
-      .eq('type', 'blog');
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const blogsRes = await fetch('/api/blogs');
+        const blogsData = await blogsRes.json();
+        
+        const catsRes = await fetch('/api/categories?type=blog');
+        const catsData = await catsRes.json();
+        
+        setBlogs(blogsData);
+        setCategories(catsData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
 
-    return { blogs: blogs || [], categories: categories || [] };
-  } catch (error) {
-    console.error('Error fetching blogs:', error);
-    return { blogs: [], categories: [] };
+  if (loading) {
+    return <div className="loading"><div className="spinner"></div></div>;
   }
-}
-
-export const metadata = {
-  title: 'Blogs - Dua & Blogs',
-  description: 'Read insightful Islamic blog posts',
-};
-
-export default async function BlogsPage() {
-  const { blogs } = await getBlogs();
 
   return (
     <>
@@ -42,13 +46,12 @@ export default async function BlogsPage() {
       </div>
 
       <div className="container">
-        <div className={styles.grid}>
-          {blogs.length > 0 ? (
-            blogs.map((blog) => <BlogCard key={blog.id} blog={blog} />)
-          ) : (
-            <p className={styles.emptyState}>No blogs available yet.</p>
-          )}
-        </div>
+        <CategoryFilter
+          categories={categories}
+          items={blogs}
+          renderItem={(blog) => <BlogCard key={blog.id} blog={blog} />}
+          emptyMessage="No blogs available yet."
+        />
       </div>
     </>
   );

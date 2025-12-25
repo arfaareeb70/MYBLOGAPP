@@ -7,6 +7,7 @@ export async function GET() {
     const { data, error } = await supabase
       .from('duas')
       .select('*, category:categories(id, name)')
+      .eq('is_published', true)
       .order('created_at', { ascending: false });
 
     if (error) throw error;

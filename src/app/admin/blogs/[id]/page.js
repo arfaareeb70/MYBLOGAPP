@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Upload } from 'lucide-react';
 import { generateSlug, compressImage } from '@/lib/utils';
-import styles from '../editor.module.css';
+import styles from '../../editor.module.css';
 
 export default function BlogEditorPage({ params }) {
   const unwrappedParams = use(params);
@@ -104,10 +104,14 @@ export default function BlogEditorPage({ params }) {
       const url = isNew ? '/api/blogs' : `/api/blogs/${unwrappedParams.id}`;
       const method = isNew ? 'POST' : 'PUT';
 
+      // Ensure slug exists
+      const finalSlug = blog.slug || generateSlug(blog.title);
+      const payload = { ...blog, slug: finalSlug };
+
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(blog),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) throw new Error('Failed to save');
