@@ -58,7 +58,7 @@ export default async function HomePage() {
             {settings.site_title || 'Deen Elevate'}
           </h1>
           <p className={styles.heroSubtitle}>
-            Discover beautiful duas and insightful Islamic content to enrich your spiritual journey
+            discover beautiful duas and insightful Islamic content to enrich your spiritual journey
           </p>
         </div>
       </section>
