@@ -55,7 +55,7 @@ export default async function HomePage() {
       <section className={styles.hero}>
         <div className="container">
           <h1 className={styles.heroTitle}>
-            {settings.site_title || 'Dua & Blogs'}
+            {settings.site_title || 'Deen Elevate'}
           </h1>
           <p className={styles.heroSubtitle}>
             Discover beautiful duas and insightful Islamic content to enrich your spiritual journey
