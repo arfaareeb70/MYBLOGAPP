@@ -6,7 +6,7 @@ import Footer from '@/components/layout/Footer';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'Dua & Blogs
+  title: 'Deen Elevate',
   description: 'Discover beautiful duas and insightful Islamic blog posts',
 };
 
