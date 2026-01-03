@@ -6,6 +6,8 @@ import DuaCard from '@/components/dua/DuaCard';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import styles from './home.module.css';
 
+export const revalidate = 0;
+
 async function getHomeData() {
   try {
     // Fetch site settings
@@ -55,10 +57,10 @@ export default async function HomePage() {
       <section className={styles.hero}>
         <div className="container">
           <h1 className={styles.heroTitle}>
-            {settings.site_title || 'Deen Elevate'}
+            {settings.site_title || 'Dua & Blogs'}
           </h1>
           <p className={styles.heroSubtitle}>
-            discover beautiful duas and insightful Islamic content to enrich your spiritual journey
+            Discover beautiful duas and insightful Islamic content to enrich your spiritual journey
           </p>
         </div>
       </section>
