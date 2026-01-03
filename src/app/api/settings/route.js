@@ -12,7 +12,7 @@ export async function GET() {
     if (error) {
       // If no settings exist, return defaults
       return NextResponse.json({
-        site_title: 'Dua & Blogs',
+        site_title: 'Deen Elevate',
         phone_number: '',
         whatsapp_number: '',
         announcement: '',
