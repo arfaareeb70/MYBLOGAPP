@@ -8,7 +8,7 @@ import { Search, Menu, X } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import styles from './Header.module.css';
 
-export default function Header({ siteTitle = 'Dua & Blogs' }) {
+export default function Header({ siteTitle = 'Deen Elevate' }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
