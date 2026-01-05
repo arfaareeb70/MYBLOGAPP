@@ -12,6 +12,8 @@ A modern Blog and Dua website built with Next.js and Supabase.
 - 💬 **WhatsApp Integration** - Floating feedback button with pre-filled messages
 - 🖼️ **Image Compression** - Automatic client-side compression to ~250KB
 - 🔐 **Admin Panel** - Full CRUD for managing content
+- ✏️ **Rich Text Editor** - WYSIWYG editor for blogs with headings, formatting, highlights, lists
+- 🔝 **Scroll-to-Top** - Automatic scroll to top on page navigation
 
 ## Getting Started
 
@@ -30,8 +32,11 @@ Create a `.env.local` file in the project root:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
 ADMIN_SESSION_SECRET=any_random_string_here
 ```
+
+> ⚠️ **Note**: `SUPABASE_SERVICE_ROLE_KEY` is required for admin login. Get it from **Settings > API > service_role**
 
 ### 3. Install Dependencies
 
@@ -86,6 +91,18 @@ src/
 - **Password**: admin123
 
 ⚠️ Change these after first login!
+
+## Tech Stack
+
+| Package | Version | Description |
+|---------|---------|-------------|
+| next | 16.1.1 | React framework |
+| react | 19.2.3 | UI library |
+| @supabase/supabase-js | ^2.89.0 | Database & auth |
+| react-quill-new | ^3.7.0 | Rich text editor |
+| lucide-react | ^0.562.0 | Icons |
+| bcryptjs | ^3.0.3 | Password hashing |
+| browser-image-compression | ^2.0.2 | Image compression |
 
 ## License
 

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Upload } from 'lucide-react';
 import { generateSlug, compressImage } from '@/lib/utils';
+import RichTextEditor from '@/components/RichTextEditor';
 import styles from '../../editor.module.css';
 
 export default function BlogEditorPage({ params }) {
@@ -220,13 +221,10 @@ export default function BlogEditorPage({ params }) {
         </div>
 
         <div className="form-group">
-          <label className="form-label">Content * (HTML supported)</label>
-          <textarea
-            className="form-input form-textarea"
+          <label className="form-label">Content *</label>
+          <RichTextEditor
             value={blog.content}
-            onChange={(e) => setBlog({ ...blog, content: e.target.value })}
-            required
-            rows={15}
+            onChange={(content) => setBlog({ ...blog, content })}
             placeholder="Write your blog content here..."
           />
         </div>
