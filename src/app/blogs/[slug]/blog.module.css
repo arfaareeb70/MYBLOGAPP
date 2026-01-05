@@ -101,6 +101,31 @@
     color: var(--text-secondary);
 }
 
+/* Highlighted text styles (from rich text editor) */
+.content mark,
+.content span[style*="background"] {
+    padding: 0.1em 0.3em;
+    border-radius: 3px;
+}
+
+.content strong {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.content em {
+    font-style: italic;
+}
+
+.content a {
+    color: var(--accent-primary);
+    text-decoration: underline;
+}
+
+.content a:hover {
+    color: var(--accent-secondary);
+}
+
 @media (max-width: 640px) {
     .title {
         font-size: 1.75rem;
