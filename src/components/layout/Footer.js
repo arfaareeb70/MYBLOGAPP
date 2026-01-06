@@ -19,7 +19,7 @@ export default function Footer() {
               Discover beautiful duas and insightful Islamic content to enrich your spiritual journey.
             </p>
             <div className={styles.socialLinks}>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className={styles.socialIcon}>
+              <a href="https://www.instagram.com/areeb_arfa/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className={styles.socialIcon}>
                 <Instagram size={20} />
               </a>
               <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className={styles.socialIcon}>
@@ -42,6 +42,7 @@ export default function Footer() {
               <li><Link href="/duas" className={styles.link}>Duas</Link></li>
               <li><Link href="/featured" className={styles.link}>Featured</Link></li>
               <li><Link href="/categories" className={styles.link}>Categories</Link></li>
+            
             </ul>
           </div>
 
