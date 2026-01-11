@@ -94,6 +94,81 @@
     font-size: 1.25rem;
 }
 
+.hadithCount {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    margin-bottom: 1.5rem;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 3rem 0;
+    padding: 1.5rem;
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+}
+
+.pageButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.pageButton:hover:not(:disabled) {
+    background: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+}
+
+.pageButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pageNumbers {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.pageNumber {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.pageNumber:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--accent-primary);
+}
+
+.activePage {
+    background: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+}
+
 @media (max-width: 768px) {
     .pageHeader {
         padding: 2rem 0 1.5rem;
@@ -105,5 +180,20 @@
 
     .chapterEnglish {
         font-size: 1.25rem;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .pageButton {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .pageNumber {
+        width: 36px;
+        height: 36px;
     }
 }

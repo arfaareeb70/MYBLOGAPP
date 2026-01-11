@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import ChapterCard from '@/components/hadith/ChapterCard';
 import { getChapters } from '@/lib/hadithApi';
 import { HADITH_COLLECTIONS } from '@/data/hadithCollections';
+import { getHadithRange } from '@/data/hadithChapterRanges';
 import styles from './collection.module.css';
 
 export default function HadithCollectionPage() {
@@ -25,8 +26,12 @@ export default function HadithCollectionPage() {
       try {
         const data = await getChapters(collectionSlug);
         console.log('Received chapters:', data.chapters?.length || 0);
-        // Handle hadithapi.com response structure
-        setChapters(data.chapters || []);
+        // Add hadith ranges to chapters if available
+        const chaptersWithRanges = (data.chapters || []).map(chapter => ({
+          ...chapter,
+          hadithRange: getHadithRange(collectionSlug, chapter.chapterNumber)
+        }));
+        setChapters(chaptersWithRanges);
       } catch (error) {
         console.error('Error fetching chapters:', error);
       } finally {

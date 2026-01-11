@@ -1,16 +1,19 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import HadithView from '@/components/hadith/HadithView';
-import { getHadithsByChapter } from '@/lib/hadithApi';
+import { getHadithsByChapterPaginated } from '@/lib/hadithApi';
 import { HADITH_COLLECTIONS } from '@/data/hadithCollections';
 import styles from './chapter.module.css';
+
+const HADITHS_PER_PAGE = 20;
 
 export default function ChapterPage() {
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const collectionSlug = params.collection;
   const chapterNumber = params.chapter;
   
@@ -18,44 +21,47 @@ export default function ChapterPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [chapterInfo, setChapterInfo] = useState(null);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    total: 0
+  });
 
   const collection = HADITH_COLLECTIONS.find(c => c.slug === collectionSlug);
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
 
   useEffect(() => {
     async function fetchHadiths() {
-      console.log(`Fetching hadiths for ${collectionSlug}, chapter ${chapterNumber}`);
+      setLoading(true);
+      console.log(`Fetching hadiths for ${collectionSlug}, chapter ${chapterNumber}, page ${currentPage}`);
       try {
-        // Fetch all hadiths - API doesn't filter properly by book or chapter
-        const data = await getHadithsByChapter(collectionSlug, chapterNumber);
-        const allHadiths = data.hadiths?.data || data.hadiths || [];
+        const data = await getHadithsByChapterPaginated(collectionSlug, chapterNumber, currentPage, HADITHS_PER_PAGE);
+        let hadithsList = data.hadiths?.data || data.hadiths || [];
         
-        console.log(`Total hadiths received: ${allHadiths.length}`);
-        
-        // Filter hadiths by BOTH collection AND chapter number
-        const chapHadiths = allHadiths.filter(h => {
-          // Check if bookSlug matches this collection
-          const bookMatches = h.bookSlug === collectionSlug || h.book?.bookSlug === collectionSlug;
-          
-          // Check if chapter number matches
-          const chapterMatches = 
-            h.chapterNumber === chapterNumber || 
-            h.chapterNumber === String(chapterNumber) ||
-            h.chapterId === chapterNumber ||
-            h.chapterId === String(chapterNumber) ||
-            h.chapter?.chapterNumber === chapterNumber ||
-            h.chapter?.chapterNumber === String(chapterNumber);
-          
-          return bookMatches && chapterMatches;
+        // Sort hadiths by hadith number to show them in correct order
+        hadithsList = hadithsList.sort((a, b) => {
+          const numA = parseInt(a.hadithNumber, 10) || 0;
+          const numB = parseInt(b.hadithNumber, 10) || 0;
+          return numA - numB;
         });
         
-        console.log(`Hadiths in ${collectionSlug} chapter ${chapterNumber}: ${chapHadiths.length}`);
-        setHadiths(chapHadiths);
+        console.log(`Hadiths received for chapter ${chapterNumber}: ${hadithsList.length}`);
+        setHadiths(hadithsList);
         
-        // Get chapter info from first hadith or fallback
-        if (chapHadiths.length > 0) {
+        // Set pagination info
+        if (data.hadiths) {
+          setPagination({
+            currentPage: data.hadiths.current_page || currentPage,
+            totalPages: data.hadiths.last_page || 1,
+            total: data.hadiths.total || hadithsList.length
+          });
+        }
+        
+        // Get chapter info from first hadith
+        if (hadithsList.length > 0) {
           setChapterInfo({
-            english: chapHadiths[0].chapterEnglish || chapHadiths[0].chapter?.chapterEnglish,
-            arabic: chapHadiths[0].chapterArabic || chapHadiths[0].chapter?.chapterArabic
+            english: hadithsList[0].chapterEnglish || hadithsList[0].chapter?.chapterEnglish,
+            arabic: hadithsList[0].chapterArabic || hadithsList[0].chapter?.chapterArabic
           });
         }
       } catch (error) {
@@ -65,7 +71,7 @@ export default function ChapterPage() {
       }
     }
     fetchHadiths();
-  }, [collectionSlug, chapterNumber]);
+  }, [collectionSlug, chapterNumber, currentPage]);
 
   const filteredHadiths = hadiths.filter(hadith => {
     if (!searchQuery.trim()) return true;
@@ -77,6 +83,12 @@ export default function ChapterPage() {
       hadith.hadithNumber?.toString().includes(query)
     );
   });
+
+  const goToPage = (page) => {
+    if (page >= 1 && page <= pagination.totalPages) {
+      router.push(`/hadith/${collectionSlug}/chapter/${chapterNumber}?page=${page}`);
+    }
+  };
 
   if (loading) {
     return <div className="loading"><div className="spinner"></div></div>;
@@ -94,7 +106,7 @@ export default function ChapterPage() {
     <>
       <div className={styles.pageHeader}>
         <div className="container">
-          <button onClick={() => router.back()} className={styles.backButton}>
+          <button onClick={() => router.push(`/hadith/${collectionSlug}`)} className={styles.backButton}>
             <ArrowLeft size={20} />
             <span>Back to Chapters</span>
           </button>
@@ -110,6 +122,10 @@ export default function ChapterPage() {
             </>
           )}
 
+          <p className={styles.hadithCount}>
+            {pagination.total} hadiths in this chapter • Page {pagination.currentPage} of {pagination.totalPages}
+          </p>
+
           <div className={styles.controls}>
             <input
               type="text"
@@ -124,13 +140,62 @@ export default function ChapterPage() {
 
       <div className="container">
         {filteredHadiths.length > 0 ? (
-          filteredHadiths.map(hadith => (
-            <HadithView 
-              key={hadith.hadithNumber} 
-              hadith={hadith} 
-              collectionName={collection.slug}
-            />
-          ))
+          <>
+            {filteredHadiths.map(hadith => (
+              <HadithView 
+                key={hadith.id || hadith.hadithNumber} 
+                hadith={hadith} 
+                collectionName={collection.slug}
+              />
+            ))}
+            
+            {/* Pagination Controls */}
+            {pagination.totalPages > 1 && (
+              <div className={styles.pagination}>
+                <button 
+                  onClick={() => goToPage(pagination.currentPage - 1)}
+                  disabled={pagination.currentPage === 1}
+                  className={styles.pageButton}
+                >
+                  <ChevronLeft size={20} />
+                  Previous
+                </button>
+                
+                <div className={styles.pageNumbers}>
+                  {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (pagination.totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (pagination.currentPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (pagination.currentPage >= pagination.totalPages - 2) {
+                      pageNum = pagination.totalPages - 4 + i;
+                    } else {
+                      pageNum = pagination.currentPage - 2 + i;
+                    }
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => goToPage(pageNum)}
+                        className={`${styles.pageNumber} ${pageNum === pagination.currentPage ? styles.activePage : ''}`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
+                
+                <button 
+                  onClick={() => goToPage(pagination.currentPage + 1)}
+                  disabled={pagination.currentPage === pagination.totalPages}
+                  className={styles.pageButton}
+                >
+                  Next
+                  <ChevronRight size={20} />
+                </button>
+              </div>
+            )}
+          </>
         ) : (
           <p className={styles.emptyMessage}>
             {searchQuery ? 'No hadiths found matching your search.' : 'No hadiths available in this chapter.'}

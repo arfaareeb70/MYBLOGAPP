@@ -76,7 +76,7 @@ export const HADITH_COLLECTIONS = [
     name: 'Musnad Ahmad',
     arabicName: 'مسند أحمد',
     totalHadith: 27647,
-    totalChapters: 0,
+    totalChapters: 14,
     description: 'Largest collection from Imam Ahmad',
     author: 'Imam Ahmad ibn Hanbal',
     compiled: '855 CE'

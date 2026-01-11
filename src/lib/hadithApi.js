@@ -71,18 +71,50 @@ export async function getHadithsByChapter(bookSlug, chapterNumber) {
   }
 
   try {
-    // Use 'book' parameter (not bookSlug) and fetch more hadiths
-    const response = await fetch(
-      `${API_BASE}/hadiths?apiKey=${API_KEY}&book=${bookSlug}&paginate=300`
-    );
+    // Use 'book' and 'chapter' parameters for proper filtering
+    // Fetch up to 500 hadiths per chapter (most chapters have fewer)
+    const url = `${API_BASE}/hadiths?apiKey=${API_KEY}&book=${bookSlug}&chapter=${chapterNumber}&paginate=500`;
+    console.log('Fetching hadiths from:', url.replace(API_KEY, 'API_KEY'));
+    
+    const response = await fetch(url);
 
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
     }
 
-    return await response.json();
+    const data = await response.json();
+    console.log(`Hadiths received for ${bookSlug} chapter ${chapterNumber}:`, data.hadiths?.data?.length || 0);
+    return data;
   } catch (error) {
     console.error('Error fetching hadiths by chapter:', error);
+    return getMockHadiths(bookSlug);
+  }
+}
+
+/**
+ * Fetch hadiths by chapter with pagination
+ */
+export async function getHadithsByChapterPaginated(bookSlug, chapterNumber, page = 1, perPage = 20) {
+  const API_KEY = getAPIKey();
+  if (!API_KEY) {
+    return getMockHadiths(bookSlug);
+  }
+
+  try {
+    const url = `${API_BASE}/hadiths?apiKey=${API_KEY}&book=${bookSlug}&chapter=${chapterNumber}&page=${page}&paginate=${perPage}`;
+    console.log('Fetching paginated hadiths from:', url.replace(API_KEY, 'API_KEY'));
+    
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log(`Page ${page}: Hadiths received for ${bookSlug} chapter ${chapterNumber}:`, data.hadiths?.data?.length || 0);
+    return data;
+  } catch (error) {
+    console.error('Error fetching paginated hadiths:', error);
     return getMockHadiths(bookSlug);
   }
 }
@@ -98,16 +130,20 @@ export async function getChapters(bookSlug) {
     return getMockChapters(bookSlug);
   }
 
+  const url = `${API_BASE}/${bookSlug}/chapters?apiKey=${API_KEY}`;
+  console.log('Fetching chapters from:', url.replace(API_KEY, 'API_KEY'));
+  
   try {
-    const response = await fetch(
-      `${API_BASE}/${bookSlug}/chapters?apiKey=${API_KEY}`
-    );
+    const response = await fetch(url);
+    console.log('Chapters API response status:', response.status);
 
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
     }
 
-    return await response.json();
+    const data = await response.json();
+    console.log('Chapters received for', bookSlug + ':', data.chapters?.length || 0);
+    return data;
   } catch (error) {
     console.error('Error fetching chapters:', error);
     return getMockChapters(bookSlug);
