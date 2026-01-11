@@ -22,7 +22,7 @@ export const HADITH_COLLECTIONS = [
     compiled: '875 CE'
   },
   {
-    slug: 'sunan-abi-dawud',
+    slug: 'abu-dawood',
     name: 'Sunan Abi Dawud',
     arabicName: 'سنن أبي داود',
     totalHadith: 5274,
@@ -32,7 +32,7 @@ export const HADITH_COLLECTIONS = [
     compiled: '889 CE'
   },
   {
-    slug: 'jami-at-tirmidhi',
+    slug: 'al-tirmidhi',
     name: 'Jami` at-Tirmidhi',
     arabicName: 'جامع الترمذي',
     totalHadith: 3956,
@@ -42,7 +42,7 @@ export const HADITH_COLLECTIONS = [
     compiled: '892 CE'
   },
   {
-    slug: 'sunan-an-nasai',
+    slug: 'sunan-nasai',
     name: "Sunan an-Nasa'i",
     arabicName: 'سنن النسائي',
     totalHadith: 5758,
@@ -52,7 +52,7 @@ export const HADITH_COLLECTIONS = [
     compiled: '915 CE'
   },
   {
-    slug: 'sunan-ibn-e-majah',
+    slug: 'ibn-e-majah',
     name: 'Sunan Ibn Majah',
     arabicName: 'سنن ابن ماجه',
     totalHadith: 4341,
@@ -62,17 +62,17 @@ export const HADITH_COLLECTIONS = [
     compiled: '887 CE'
   },
   {
-    slug: 'muwatta-imam-malik',
-    name: 'Muwatta Malik',
-    arabicName: 'موطأ مالك',
-    totalHadith: 1720,
-    totalChapters: 61,
-    description: 'Earliest collection of hadith and fiqh',
-    author: 'Imam Malik',
-    compiled: '795 CE'
+    slug: 'mishkat',
+    name: 'Mishkat al-Masabih',
+    arabicName: 'مشكاة المصابيح',
+    totalHadith: 5945,
+    totalChapters: 29,
+    description: 'Collection of authentic hadiths',
+    author: 'Imam Wali al-Din al-Tabrizi',
+    compiled: '1337 CE'
   },
   {
-    slug: 'musnad-ahmad-ibn-hanbal',
+    slug: 'musnad-ahmad',
     name: 'Musnad Ahmad',
     arabicName: 'مسند أحمد',
     totalHadith: 27647,

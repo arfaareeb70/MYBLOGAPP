@@ -21,8 +21,10 @@ export default function HadithCollectionPage() {
 
   useEffect(() => {
     async function fetchChapters() {
+      console.log('Fetching chapters for:', collectionSlug);
       try {
         const data = await getChapters(collectionSlug);
+        console.log('Received chapters:', data.chapters?.length || 0);
         // Handle hadithapi.com response structure
         setChapters(data.chapters || []);
       } catch (error) {
