@@ -23,17 +23,39 @@ export default function ChapterPage() {
 
   useEffect(() => {
     async function fetchHadiths() {
+      console.log(`Fetching hadiths for ${collectionSlug}, chapter ${chapterNumber}`);
       try {
+        // Fetch all hadiths - API doesn't filter properly by book or chapter
         const data = await getHadithsByChapter(collectionSlug, chapterNumber);
-        // Handle hadithapi.com response structure
-        const hadithsList = data.hadiths?.data || data.hadiths || [];
-        setHadiths(hadithsList);
+        const allHadiths = data.hadiths?.data || data.hadiths || [];
         
-        // Get chapter info from first hadith
-        if (hadithsList.length > 0) {
+        console.log(`Total hadiths received: ${allHadiths.length}`);
+        
+        // Filter hadiths by BOTH collection AND chapter number
+        const chapHadiths = allHadiths.filter(h => {
+          // Check if bookSlug matches this collection
+          const bookMatches = h.bookSlug === collectionSlug || h.book?.bookSlug === collectionSlug;
+          
+          // Check if chapter number matches
+          const chapterMatches = 
+            h.chapterNumber === chapterNumber || 
+            h.chapterNumber === String(chapterNumber) ||
+            h.chapterId === chapterNumber ||
+            h.chapterId === String(chapterNumber) ||
+            h.chapter?.chapterNumber === chapterNumber ||
+            h.chapter?.chapterNumber === String(chapterNumber);
+          
+          return bookMatches && chapterMatches;
+        });
+        
+        console.log(`Hadiths in ${collectionSlug} chapter ${chapterNumber}: ${chapHadiths.length}`);
+        setHadiths(chapHadiths);
+        
+        // Get chapter info from first hadith or fallback
+        if (chapHadiths.length > 0) {
           setChapterInfo({
-            english: hadithsList[0].chapterEnglish,
-            arabic: hadithsList[0].chapterArabic
+            english: chapHadiths[0].chapterEnglish || chapHadiths[0].chapter?.chapterEnglish,
+            arabic: chapHadiths[0].chapterArabic || chapHadiths[0].chapter?.chapterArabic
           });
         }
       } catch (error) {

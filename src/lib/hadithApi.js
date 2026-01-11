@@ -37,7 +37,7 @@ export async function getBooks() {
  * @param {number} page - Page number for pagination
  * @param {number} paginate - Number of hadiths per page
  */
-export async function getHadiths(bookSlug, page = 1, paginate = 50) {
+export async function getHadiths(bookSlug, page = 1, paginate = 100) {
   const API_KEY = getAPIKey();
   if (!API_KEY) {
     console.warn('Hadith API key not found. Using mock data.');
@@ -46,7 +46,7 @@ export async function getHadiths(bookSlug, page = 1, paginate = 50) {
 
   try {
     const response = await fetch(
-      `${API_BASE}/hadiths?apiKey=${API_KEY}&bookSlug=${bookSlug}&page=${page}&paginate=${paginate}`
+      `${API_BASE}/hadiths?apiKey=${API_KEY}&book=${bookSlug}&page=${page}&paginate=${paginate}`
     );
 
     if (!response.ok) {
@@ -71,8 +71,9 @@ export async function getHadithsByChapter(bookSlug, chapterNumber) {
   }
 
   try {
+    // Use 'book' parameter (not bookSlug) and fetch more hadiths
     const response = await fetch(
-      `${API_BASE}/hadiths?apiKey=${API_KEY}&bookSlug=${bookSlug}&chapterNumber=${chapterNumber}`
+      `${API_BASE}/hadiths?apiKey=${API_KEY}&book=${bookSlug}&paginate=300`
     );
 
     if (!response.ok) {
