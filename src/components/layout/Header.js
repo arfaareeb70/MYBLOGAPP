@@ -43,6 +43,9 @@ export default function Header({ siteTitle = 'Deen Elevate' }) {
           <Link href="/quran" className={styles.navLink} onClick={() => setMobileMenuOpen(false)}>
             Quran
           </Link>
+          <Link href="/hadith" className={styles.navLink} onClick={() => setMobileMenuOpen(false)}>
+            Hadith
+          </Link>
 
           <form onSubmit={handleSearch} className={styles.searchForm}>
             <input
