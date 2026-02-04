@@ -4,11 +4,37 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
 
+import { GoogleAnalytics } from '@next/third-parties/google';
+
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'Deen Elevate',
-  description: 'Discover beautiful duas and insightful Islamic blog posts',
+  metadataBase: new URL('https://deenelevate.com'),
+  title: {
+    default: 'Deen Elevate - Islamic Blogs & Duas',
+    template: '%s | Deen Elevate',
+  },
+  description: 'Discover authentic Islamic knowledge, beautiful duas, and insightful blog posts to elevate your spiritual journey.',
+  keywords: ['dua', 'deen', 'islamic blogs', 'hadith', 'quran', 'islamic knowledge', 'muslim lifestyle', 'spiritual growth', 'sunnah', 'prophetic duas'],
+  openGraph: {
+    title: 'Deen Elevate - Islamic Blogs & Duas',
+    description: 'Discover authentic Islamic knowledge, beautiful duas, and insightful blog posts.',
+    url: 'https://deenelevate.com',
+    siteName: 'Deen Elevate',
+    locale: 'en_US',
+    type: 'website',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export default function RootLayout({ children }) {
@@ -30,6 +56,7 @@ export default function RootLayout({ children }) {
           <Footer />
         </div>
       </body>
+      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
     </html>
   );
 }
